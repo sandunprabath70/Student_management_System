@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student table</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- Option 1: Include in HTML -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Student Records</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse ml-3" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="student-list.html">Student List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="add-edit-student.html">Add Student</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <!-- Display the submitted data in a table -->
+    <h1><b>Student List</b></h1>
+    <!-- Search Bar -->
+    <nav class="navbar navbar-light bg-light justify-content-end">
+        <form class="form-inline">
+            <div class="mx-2"><select class="form-control " id="searchCategory">
+                <option value="SID">Student ID</option>
+                <option value="FirstName">First Name</option>
+                <option value="LastName">Last Name</option>
+                <option value="Email">Email</option>
+                <option value="NearCity">Near City</option>
+                <option value="Course">Course</option>
+                <option value="Guardian">Guardian</option>
+            </select></div>
+            <input class="form-control mr-sm-2" id="searchTerm" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" id="searchButton" type="button">Search</button>
+        </form>
+    </nav>
+    <table class="table mt-3 text-center">
+        <tbody id="studentTableBody">
+        <!-- Student data will be inserted here dynamically -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+    // Send a GET request to the server
+    $.ajax({
+        url: 'http://localhost:3000/students',
+        type: 'GET',
+        success: function(data) {
+            // Create a table
+            const table = $('<table>').addClass('table');
+
+            // Create table head
+            const thead = $('<thead>');
+            const headerRow = $('<tr>');
+
+            // Define your headers
+            const headers = ['SID', 'FirstName', 'LastName', 'Email', 'NearCity', 'Course', 'Guardian', 'Subjects', 'Actions'];
+
+            headers.forEach(header => {
+                const th = $('<th>').text(header);
+                headerRow.append(th);
+            });
+
+            thead.append(headerRow);
+            table.append(thead);
+
+            // Create table body
+            const tbody = $('<tbody>');
+            $.each(data, function(index, student) {
+                const row = $('<tr>');
+                $.each(student, function(key, value) {
+                    if (key !== '_id') { // Skip the _id key
+                        const td = $('<td>').text(value);
+                        row.append(td);
+                    }
+                });
+
+                // Add the "Update" and "Delete" buttons
+                const actionTd = $('<td>');
+                const updateIcon = $('<i>').addClass('bi bi-pencil-square');
+                const updateButton = $('<button>').addClass('btn btn-primary').append(updateIcon);
+
+                const deleteIcon = $('<i>').addClass('bi bi-trash');
+                const deleteButton = $('<button>').addClass('btn btn-danger').append(deleteIcon);
+                deleteButton.data('id', student._id); // Store the student's id as a data attribute
+                actionTd.append(updateButton, deleteButton);
+                row.append(actionTd);
+
+                tbody.append(row);
+            });
+            table.append(tbody);
+
+            // Append the table to the designated tbody element in the HTML document
+            $('#studentTableBody').append(table);
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+
+
+    function searchWithSelectedCategoryAndString() {
+        // Get the selected category and search term
+        const category = $('#searchCategory').val();
+        const searchTerm = $('#searchTerm').val();
+
+        // Send a GET request to the server
+        $.ajax({
+            url: `http://localhost:3000/search?category=${category}&searchTerm=${searchTerm}`,
+            type: 'GET',
+            success: function(data) {
+                // Clear the current table data
+                $('#studentTableBody').empty();
+
+                // Create a table
+                const table = $('<table>').addClass('table');
+
+                // Create table body
+                const tbody = $('<tbody>');
+                $.each(data, function(index, student) {
+                    const row = $('<tr>');
+                    $.each(student, function(key, value) {
+                        const td = $('<td>').text(value);
+                        row.append(td);
+                    });
+                    tbody.append(row);
+                });
+                table.append(tbody);
+
+                // Append the table to the designated tbody element in the HTML document
+                $('#studentTableBody').append(table);
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+
+    function deleteStudentById(id) {
+        $.ajax({
+            url: 'http://localhost:3000/students/' + id,
+            type: 'DELETE',
+            success: function(response) {
+                console.log('Student deleted successfully');
+                // You can also refresh the student list here
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    $('#studentTableBody').on('click', '.btn-danger', function() {
+        const studentId = $(this).data('id'); // Retrieve the student's id
+        deleteStudentById(studentId);
+    });
+
+
+    $('#searchButton').on('click', function(e) {
+        e.preventDefault(); // Prevent the form from being submitted
+        searchWithSelectedCategoryAndString();
+    });
+
+</script>
+</body>
+</html>

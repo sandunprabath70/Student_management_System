@@ -1,0 +1,20 @@
+body{
+   background-image:url(img/bg1.jpg) ;
+   background-image:url(img/bg2.jpg) ;
+   background-image:url(img/bg3.jpg) ;
+
+ }
+
+.jumbotron{
+    opacity: 0.9;
+}
+.container{
+    margin-top: 200px;
+    
+}
+a{
+    padding: 0;
+    margin-bottom: 0;
+}
+
+

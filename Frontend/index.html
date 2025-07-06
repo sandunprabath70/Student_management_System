@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Student Records</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse ml-3" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html" data-toggle="popover" data-placement="bottom"
+                        data-content="Home Page">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="student-list.html" data-toggle="popover" data-placement="bottom"
+                        data-content="Student List Page">Student List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="add-edit-student.html" data-toggle="popover" data-placement="bottom"
+                        data-content="Add Student Page">Add Student</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Login Button -->
+        <a href="login.html" class="link btn btn-primary mr-2 ml-2" data-toggle="popover" data-placement="bottom"
+            data-content="Click here to login">Login</a>
+    </nav>
+
+    <!-- Welcome Message -->
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-3 text-center"><b>Welcome to Student Records</h1></b>
+            <p class="lead text-center"><b> Manage your student records efficiently.</b></p>
+            <div class="text-center">
+                <a class="link" href="student-list.html" onmouseover="increaseTextSize(this)"
+                    onmouseout="resetTextSize(this)">View List</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery (make sure to include them at the end of the body) -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            // Images slide show
+            var images = ['img/bg1.jpg', 'img/bg2.jpg','img/bg3.jpg'];
+            var currentIndex = 0;
+
+            function changeBackground() {
+                $('body').css('background', 'url(' + images[currentIndex] + ') center/cover fixed');
+                currentIndex = (currentIndex + 1) % images.length;
+            }
+
+            setInterval(changeBackground, 4000);
+        });
+
+        // Enable Bootstrap Popover for navbar links
+        $('.navbar-nav a').popover({
+            trigger: 'hover'
+        });
+
+        // Increase text size 
+        function increaseTextSize(element) {
+            $(element).css('font-size', '1.5em'); // Adjust the font size 
+        }
+
+        // Reset text size 
+        function resetTextSize(element) {
+            $(element).css('font-size', ''); // Reset font size to default
+        }
+    </script>
+</body>
+
+</html>
